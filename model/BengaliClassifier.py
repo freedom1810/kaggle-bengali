@@ -6,8 +6,16 @@ import torch.nn.functional as F
 
 
 class BengaliClassifier(nn.Module):
-    def __init__(self, predictor, n_grapheme=168, n_vowel=11, n_consonant=7, cutmix_ratio=0, cutmix_bien=0):
+    def __init__(self, 
+                    predictor, 
+                    n_grapheme=168, 
+                    n_vowel=11, 
+                    n_consonant=7, 
+                    cutmix_ratio=0, 
+                    cutmix_bien=0):
+                    
         super(BengaliClassifier, self).__init__()
+
         self.n_grapheme = n_grapheme
         self.n_vowel = n_vowel
         self.n_consonant = n_consonant

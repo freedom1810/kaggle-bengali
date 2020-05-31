@@ -15,8 +15,6 @@ def save_json(filepath, params):
         json.dump(params, f, indent=4)
 
 
-
-
 class DictOutputTransform:
     def __init__(self, key, index=0):
         self.key = key
