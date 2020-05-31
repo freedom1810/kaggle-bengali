@@ -4,10 +4,9 @@ from time import perf_counter
 
 
 class LogReport:
-    def __init__(self, trainer = None, metric = None, dirpath=None, logger=None):
-
-        self.trainer = trainer
-        self.metric = metric
+    def __init__(self,  
+                dirpath=None
+                ):
 
         self.dirpath = str(dirpath) 
         self.history = []
@@ -19,18 +18,21 @@ class LogReport:
         with open(filepath, 'w') as f:
             json.dump(params, f, indent=4)
 
-    def update(self):
+    def update(self, 
+                trainer = None, 
+                metrics = None
+                ):
 
         elapsed_time = perf_counter() - self.start_time
 
-        elem = {'epoch': self.trainer.epoch,
-                'iteration': self.trainer.iteration}
+        elem = {'epoch': trainer.epoch,
+                'iteration': trainer.iteration}
 
         elem.update({f'train/{key}': value
-                     for key, value in self..metric.keys()})
+                     for key, value in metrics.keys()})
 
         elem.update({f'valid/{key}': value
-                        for key, value in self.metric.keys()})
+                        for key, value in metrics.keys()})
 
         elem['elapsed_time'] = elapsed_time
 
