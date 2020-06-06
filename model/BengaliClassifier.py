@@ -25,10 +25,6 @@ class BengaliClassifier(nn.Module):
         self.cutmix_ratio = cutmix_ratio
         self.cutmix_bien = cutmix_bien
 
-        self.metrics_keys = [
-            'loss', 'loss_grapheme', 'loss_vowel', 'loss_consonant',
-            'acc_grapheme', 'acc_vowel', 'acc_consonant']
-
     def forward(self, x, y=None):
         
         label1 = y[:, 0]
