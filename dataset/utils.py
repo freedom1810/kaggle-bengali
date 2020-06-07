@@ -74,13 +74,13 @@ def kFold(path = ''):
         else:
             labels[label] += 1
             labels_path[label].append(path)
-
-    train = {'image_id': [], 'grapheme_root': [],'vowel_diacritic': [],'consonant_diacritic': []}
-
-    test= {'image_id': [], 'grapheme_root': [],'vowel_diacritic': [],'consonant_diacritic': []}
-
+            
     # chia làm 5 fold
     for fold in range(5):
+
+        train = {'image_id': [], 'grapheme_root': [],'vowel_diacritic': [],'consonant_diacritic': []}
+
+        test= {'image_id': [], 'grapheme_root': [],'vowel_diacritic': [],'consonant_diacritic': []}
 
         for i in labels:
 
