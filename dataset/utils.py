@@ -49,6 +49,10 @@ def kFold(path = ''):
     load dữ liệu vào sau đó shuffle luôn 
     vì dữ liệu có thể do nhiều người làm và vào thời điểm khác nhau nên phải shuffle luôn
     '''
+
+    if not os.path.exists('fold'):
+        os.mkdir('fold')
+
     train = pd.read_csv(path + 'train.csv')
     new_rows = [i for i in range(len(train))]
     random.seed(2020)
@@ -124,8 +128,8 @@ def kFold(path = ''):
 
 
 def main():
-    unzip_data(path = '/home/asilla/sonnh/ben/')
-    kFold(path = '/home/asilla/sonnh/ben/')
+    unzip_data(path = '/home/asilla/sonnh/k/ben/')
+    kFold(path = '/home/asilla/sonnh/k/ben/')
     
 if __name__ == "__main__":
     main()

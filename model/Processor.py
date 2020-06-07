@@ -1,6 +1,8 @@
 import os
 from tqdm import tqdm
 
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
 
 import torch
 from torch.utils.data.dataloader import DataLoader
