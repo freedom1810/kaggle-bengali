@@ -1,7 +1,7 @@
 import os
 import json
 from time import perf_counter
-
+import pandas as pd
 
 class LogReport:
     def __init__(self,  
@@ -18,18 +18,22 @@ class LogReport:
     def update(self, 
                 epoch = None, 
                 train_metrics = None,
-                eval_metrics = None
+                eval_metrics = None,
+                num_train = 1,
+                num_valid = 1,
                 ):
 
         elapsed_time = perf_counter() - self.start_time
 
         elem = {'epoch': epoch}
 
-        elem.update({f'train/{key}': value
-                     for key, value in train_metrics.keys()})
+        elem.update({f'train/{key}': train_metrics[key] / num_train
+                     for key in train_metrics})
 
-        elem.update({f'valid/{key}': value
-                        for key, value in eval_metrics.keys()})
+        elem.update({f'valid/{key}': eval_metrics[key] / num_valid
+                        for key in eval_metrics})
+
+        print(elem)
 
         elem['elapsed_time'] = elapsed_time
 

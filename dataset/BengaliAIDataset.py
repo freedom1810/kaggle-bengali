@@ -3,6 +3,7 @@ from torch.utils.data.dataset import Dataset
 
 import numpy as np
 import six
+import pandas as pd
 
 class BengaliAIDataset(Dataset):
     def __init__(self, 
@@ -96,4 +97,4 @@ class BengaliAIDataset(Dataset):
 
             final_train_labels.append(labels.index(label))
 
-    return train_images, np.array(final_train_labels)
+        return train_images, np.array(final_train_labels)

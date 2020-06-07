@@ -1,6 +1,9 @@
+import os
 from tqdm import tqdm
 
+
 import torch
+from torch.utils.data.dataloader import DataLoader
 
 from model.utils.LogReport import LogReport
 from model.Predictor import Predictor
@@ -23,11 +26,11 @@ class Processor():
         # setup dataloader
         train_transform = Transform(train = True,
                                     mode = 'train',
-                                    args)
+                                    args = args)
 
         valid_transform = Transform(train=True,
                                     mode = 'valid',
-                                    args)
+                                    args = args)
 
         if args.debug:
             indices = list(range(1000))
@@ -39,15 +42,22 @@ class Processor():
                                         indices= indices)
 
         valid_dataset = BengaliAIDataset(path = args.valid_path, 
-                                        transform = train_transform,
+                                        transform = valid_transform,
                                         indices = indices)
 
-        train_loader =  DataLoader(train_dataset, 
+        self.num_train = len(train_dataset)
+        self.num_valid = len(valid_dataset)
+
+        print()
+        print('train: {}, valid: {}'.format(self.num_train, self.num_valid))
+        print()
+
+        self.train_loader =  DataLoader(train_dataset, 
                                     batch_size = args.batch_size, 
                                     shuffle = True, 
                                     num_workers = args.num_workers)
 
-        valid_loader = DataLoader(valid_dataset, 
+        self.valid_loader = DataLoader(valid_dataset, 
                                     batch_size = args.batch_size, 
                                     shuffle = False, 
                                     num_workers = args.num_workers)
@@ -62,6 +72,7 @@ class Processor():
 
 
     def init_metrics(self):
+
         self.train_metrics = {'loss' : 0.0, 
                 'loss_grapheme' : 0.0, 
                 'loss_vowel' : 0.0,
@@ -89,7 +100,7 @@ class Processor():
         if not os.path.exists(self.args.output_path):
             os.mkdir(self.args.output_path)
 
-        predictor = self.classifier.predictor
+        predictor = self.classifier.predictor.state_dict()
         for key in predictor.keys():
             predictor[key] = predictor[key].cpu()
 
@@ -145,11 +156,16 @@ class Processor():
             self.epoch += 1
             self.init_metrics()
 
+            print('epoch {}/ {}'.format(self.epoch, self.args.max_epoch))
             self.train()
 
             self.eval()
 
-            self.log_report.update(self.epoch, self.train_metrics, self.eval_metrics)
+            self.log_report.update(epoch = self.epoch, 
+                                    train_metrics = self.train_metrics, 
+                                    eval_metrics = self.eval_metrics,
+                                    num_train = self.num_train,
+                                    num_valid = self.num_valid)
 
             self.save_checkpoint()
 

@@ -3,23 +3,28 @@ import numpy as np
 from skimage.transform import AffineTransform, warp
 import albumentations as A
 import cv2
-from .auto_aug import *
+from dataset.AutoAugment import *
 from PIL import Image, ImageEnhance, ImageOps
 
 def train_aug(image_size, use_cutout = False):
     if use_cutout:
         return Compose([Resize(*image_size),
                         ShiftScaleRotate(rotate_limit=10),
-                        Normalize()], p = 1)
+                        Normalize()
+                        ], 
+                        p = 1)
 
     return Compose([Resize(*image_size),
                     ShiftScaleRotate(rotate_limit=10),
-                    Normalize()], p = 1)
+                    Normalize()
+                    ], 
+                    p = 1)
 
 def valid_aug(image_size):
     
     return Compose([Resize(*image_size),
-                    Normalize()], p = 1)
+                    Normalize()
+                    ], p = 1)
 
 def cutout_aug(h = 1, w = 1):
 
@@ -63,13 +68,7 @@ class Transform:
     def __init__(self,
                 train=False,
                 mode = 'train',
-                args,
-                # path = '',
-                # crop=False,
-                # padding = 16,
-                # image_size=(224, 224), 
-                # use_cutout = False, 
-                # auto_aug = False
+                args = None,
                 ):
 
         self.args = args
@@ -107,10 +106,15 @@ class Transform:
                 img = np.array(img)
 
             img = apply_aug(train_aug(self.args.image_size, self.args.use_cutout), img)
+            cv2.imwrite('test2/' + path + '.jpg', img)
         else:
+
+            img = cv2.imread(self.args.path + path + '.png', 1)
+
             img = apply_aug(valid_aug(self.args.image_size), img)
 
-        # cv2.imwrite('test_auto_aug/' + path + '.jpg', img)
+            cv2.imwrite('test/' + path + '.jpg', img)
+
         img = np.moveaxis(img, -1, 0)  # conver to channel first, pytorch suck
         img = img.astype(np.float32)
 

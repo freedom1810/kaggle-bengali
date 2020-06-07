@@ -2,7 +2,7 @@ import os
 import yaml
 import argparse
 
-from model.Processor
+from model.Processor import Processor
 
 def main():
     parser = Init_parameters()
