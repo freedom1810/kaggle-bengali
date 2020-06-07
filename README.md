@@ -9,7 +9,7 @@
     - [ ] Multi GPU trainning
     - [ ] Add cutout
     - [ ] Add cutmix
-    - [ ] Auto 
+    - [ ] Add AutoAugment
     - [ ] Inference code
         
 - [ ] Refactor source code to use with pytorch-ignite
