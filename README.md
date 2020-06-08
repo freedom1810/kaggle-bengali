@@ -5,9 +5,9 @@
 - [ ] Refactor source code to use with pytorch
     - [x] Default train
         - [x] Add loss
-        - [ ] Add metric
-    - [ ] Multi GPU trainning
-    - [ ] Add cutout
+        - [x] Add metric
+    - [x] Multi GPU trainning
+    - [x] Add cutout
     - [ ] Add cutmix
     - [ ] Add AutoAugment
     - [ ] Inference code
