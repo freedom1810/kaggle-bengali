@@ -20,6 +20,7 @@ class BengaliClassifier(nn.Module):
         self.n_vowel = n_vowel
         self.n_consonant = n_consonant
         self.n_total_class = self.n_grapheme + self.n_vowel + self.n_consonant
+        # self.predictor = nn.DataParallel(predictor)
         self.predictor = predictor
 
         self.cutmix_ratio = cutmix_ratio
@@ -77,9 +78,9 @@ class BengaliClassifier(nn.Module):
                 'loss_grapheme': loss_grapheme.item(),
                 'loss_vowel': loss_vowel.item(),
                 'loss_consonant': loss_consonant.item(),
-                'acc_grapheme': accuracy(pred_g, label1),
-                'acc_vowel': accuracy(pred_v, label2),
-                'acc_consonant': accuracy(pred_c, label3),
+                # 'acc_grapheme': accuracy(pred_g, label1),
+                # 'acc_vowel': accuracy(pred_v, label2),
+                # 'acc_consonant': accuracy(pred_c, label3),
             }
             
         #----------------------------
@@ -98,9 +99,9 @@ class BengaliClassifier(nn.Module):
                 'loss_grapheme': loss_grapheme.item(),
                 'loss_vowel': loss_vowel.item(),
                 'loss_consonant': loss_consonant.item(),
-                'acc_grapheme': accuracy(pred_g, y[:, 0]),
-                'acc_vowel': accuracy(pred_v, y[:, 1]),
-                'acc_consonant': accuracy(pred_c, y[:, 2]),
+                # 'acc_grapheme': accuracy(pred_g, y[:, 0]),
+                # 'acc_vowel': accuracy(pred_v, y[:, 1]),
+                # 'acc_consonant': accuracy(pred_c, y[:, 2]),
             }
 
         return loss, metrics, torch.cat((pred_g, pred_v, pred_c), dim = 1)
@@ -122,9 +123,9 @@ class BengaliClassifier(nn.Module):
             'loss_grapheme': loss_grapheme.item(),
             'loss_vowel': loss_vowel.item(),
             'loss_consonant': loss_consonant.item(),
-            'acc_grapheme': accuracy(pred_g, y[:, 0]),
-            'acc_vowel': accuracy(pred_v, y[:, 1]),
-            'acc_consonant': accuracy(pred_c, y[:, 2]),
+            # 'acc_grapheme': accuracy(pred_g, y[:, 0]),
+            # 'acc_vowel': accuracy(pred_v, y[:, 1]),
+            # 'acc_consonant': accuracy(pred_c, y[:, 2]),
         }
 
         return loss, metrics, torch.cat((pred_g, pred_v, pred_c), dim = 1)

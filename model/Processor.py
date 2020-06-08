@@ -5,9 +5,12 @@ import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 
 import torch
+from torch import nn
 from torch.utils.data.dataloader import DataLoader
 
 from model.utils.LogReport import LogReport
+from model.utils.Metric import *
+
 from model.Predictor import Predictor
 from model.BengaliClassifier import BengaliClassifier
 
@@ -65,25 +68,36 @@ class Processor():
                                     num_workers = args.num_workers)
 
 
-        predictor = Predictor()
+        predictor = nn.DataParallel(Predictor())
         self.classifier = BengaliClassifier(predictor, 
                                         cutmix_ratio = args.cutmix_ratio, 
                                         cutmix_bien = args.cutmix_bien).to(self.device)
+
+        # self.classifier = nn.DataParallel(self.classifier)
+        # self.classifier = self.classifier.to(self.device)
 
         self.optimizer = torch.optim.Adam(self.classifier.parameters(), lr = args.lr)
 
 
     def init_metrics(self):
 
+        self.train_preds = None
+        self.train_gt = None
+
         self.train_metrics = {'loss' : 0.0, 
-                'loss_grapheme' : 0.0, 
-                'loss_vowel' : 0.0,
-                'loss_consonant' : 0.0}
+                            'loss_grapheme' : 0.0, 
+                            'loss_vowel' : 0.0,
+                            'loss_consonant' : 0.0
+                }
+
+        self.eval_preds = None
+        self.eval_gt = None
 
         self.eval_metrics = {'loss' : 0.0, 
-                'loss_grapheme' : 0.0, 
-                'loss_vowel' : 0.0,
-                'loss_consonant' : 0.0}
+                            'loss_grapheme' : 0.0, 
+                            'loss_vowel' : 0.0,
+                            'loss_consonant' : 0.0
+                }
 
     def load_checkpoint(self):
 
@@ -128,7 +142,16 @@ class Processor():
             loss.backward()
             self.optimizer.step()
 
-            for key in self.train_metrics:
+
+            #compute score
+            if self.train_preds is None:
+                self.train_preds = pred_y
+                self.train_gt = y
+            else:
+                self.train_preds = torch.cat((self.train_preds, pred_y), dim = 0)
+                self.train_gt = torch.cat((self.train_gt, y), dim = 0)
+
+            for key in metrics:
                 self.train_metrics[key] += metrics[key] * x.shape[0]
 
     def eval(self):
@@ -143,7 +166,16 @@ class Processor():
 
                 loss, metrics, pred_y = self.classifier.forward_eval(x, y)
 
-                for key in self.eval_metrics:
+
+                #compute score
+                if self.eval_preds is None:
+                    self.eval_preds = pred_y
+                    self.eval_gt = y
+                else:
+                    self.eval_preds = torch.cat((self.eval_preds, pred_y), dim = 0)
+                    self.eval_gt = torch.cat((self.eval_gt, y), dim = 0)
+
+                for key in metrics:
                     self.eval_metrics[key] += metrics[key] * x.shape[0]
 
     def start(self):
@@ -163,11 +195,21 @@ class Processor():
 
             self.eval()
 
+            for key in self.train_metrics:
+                self.train_metrics[key] /= self.num_train
+                self.eval_metrics[key] /= self.num_valid
+
+            train_score = macro_recall(self.train_preds, self.train_gt)
+            self.train_metrics.update(train_score)
+
+            eval_score = macro_recall(self.eval_preds, self.eval_gt)
+            self.eval_metrics.update(eval_score)
+
             self.log_report.update(epoch = self.epoch, 
                                     train_metrics = self.train_metrics, 
                                     eval_metrics = self.eval_metrics,
-                                    num_train = self.num_train,
-                                    num_valid = self.num_valid)
+                                    num_train = 1,
+                                    num_valid = 1)
 
             self.save_checkpoint()
 
