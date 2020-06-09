@@ -6,6 +6,9 @@
     - [x] Default train
         - [x] Add loss
         - [x] Add metric
+    - [ ] Pretrain 1292 class
+        - [ ] CrossEntropy loss
+        - [ ] Triplet Loss 
     - [x] Multi GPU trainning
     - [x] Add cutout
     - [ ] Add cutmix
