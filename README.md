@@ -10,10 +10,23 @@
         - [ ] CrossEntropy loss
         - [ ] Triplet Loss 
     - [x] Multi GPU trainning
-    - [x] Add cutout
-    - [ ] Add cutmix
-    - [ ] Add AutoAugment
+    - [ ] Transform - Data augment
+        - [x] Add cutout
+        - [ ] Add cutmix
+        - [ ] Add AutoAugment
     - [ ] Inference code
-        
-- [ ] Refactor source code to use with pytorch-ignite
+
+- [ ] Tensorflow 2.0 version
+    - [ ] Default train
+        - [ ] Build model
+        - [ ] Data loader
+        - [ ] Default transform (resize, normalize)
+        - [ ] Add loss
+        - [ ] Add metric
+    - [ ] Multi GPU training
+    - [ ] Transform - Data augment
+        - [x] Add cutout
+        - [ ] Add cutmix
+        - [ ] Add AutoAugment
+    - [ ] Inference code
 
