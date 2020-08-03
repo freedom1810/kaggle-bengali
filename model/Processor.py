@@ -130,9 +130,10 @@ class Processor():
 
     def train(self):
         self.classifier.train()
-        self.optimizer.zero_grad()
+        
 
         for x, y in tqdm(self.train_loader):
+            self.optimizer.zero_grad()
 
             x = x.to(self.device)
             y = y.to(self.device)
@@ -153,6 +154,7 @@ class Processor():
 
             for key in metrics:
                 self.train_metrics[key] += metrics[key] * x.shape[0]
+            
 
     def eval(self):
         self.classifier.eval()
